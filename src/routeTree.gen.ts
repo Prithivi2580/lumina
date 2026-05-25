@@ -9,38 +9,110 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as DashboardRouteRouteImport } from './routes/_dashboard/route'
+import { Route as webRouteRouteImport } from './routes/(web)/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardSettingIndexRouteImport } from './routes/_dashboard/setting/index'
+import { Route as DashboardHomeIndexRouteImport } from './routes/_dashboard/home/index'
+import { Route as DashboardChatIndexRouteImport } from './routes/_dashboard/chat/index'
+import { Route as DashboardBillingIndexRouteImport } from './routes/_dashboard/billing/index'
 
+const DashboardRouteRoute = DashboardRouteRouteImport.update({
+  id: '/_dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const webRouteRoute = webRouteRouteImport.update({
+  id: '/(web)',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardSettingIndexRoute = DashboardSettingIndexRouteImport.update({
+  id: '/setting/',
+  path: '/setting/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardHomeIndexRoute = DashboardHomeIndexRouteImport.update({
+  id: '/home/',
+  path: '/home/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardChatIndexRoute = DashboardChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardBillingIndexRoute = DashboardBillingIndexRouteImport.update({
+  id: '/billing/',
+  path: '/billing/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/billing/': typeof DashboardBillingIndexRoute
+  '/chat/': typeof DashboardChatIndexRoute
+  '/home/': typeof DashboardHomeIndexRoute
+  '/setting/': typeof DashboardSettingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/billing': typeof DashboardBillingIndexRoute
+  '/chat': typeof DashboardChatIndexRoute
+  '/home': typeof DashboardHomeIndexRoute
+  '/setting': typeof DashboardSettingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/(web)': typeof webRouteRoute
+  '/_dashboard': typeof DashboardRouteRouteWithChildren
+  '/_dashboard/billing/': typeof DashboardBillingIndexRoute
+  '/_dashboard/chat/': typeof DashboardChatIndexRoute
+  '/_dashboard/home/': typeof DashboardHomeIndexRoute
+  '/_dashboard/setting/': typeof DashboardSettingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/billing/' | '/chat/' | '/home/' | '/setting/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/billing' | '/chat' | '/home' | '/setting'
+  id:
+    | '__root__'
+    | '/'
+    | '/(web)'
+    | '/_dashboard'
+    | '/_dashboard/billing/'
+    | '/_dashboard/chat/'
+    | '/_dashboard/home/'
+    | '/_dashboard/setting/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  webRouteRoute: typeof webRouteRoute
+  DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_dashboard': {
+      id: '/_dashboard'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof DashboardRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(web)': {
+      id: '/(web)'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof webRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +120,59 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_dashboard/setting/': {
+      id: '/_dashboard/setting/'
+      path: '/setting'
+      fullPath: '/setting/'
+      preLoaderRoute: typeof DashboardSettingIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/home/': {
+      id: '/_dashboard/home/'
+      path: '/home'
+      fullPath: '/home/'
+      preLoaderRoute: typeof DashboardHomeIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/chat/': {
+      id: '/_dashboard/chat/'
+      path: '/chat'
+      fullPath: '/chat/'
+      preLoaderRoute: typeof DashboardChatIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_dashboard/billing/': {
+      id: '/_dashboard/billing/'
+      path: '/billing'
+      fullPath: '/billing/'
+      preLoaderRoute: typeof DashboardBillingIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
   }
 }
 
+interface DashboardRouteRouteChildren {
+  DashboardBillingIndexRoute: typeof DashboardBillingIndexRoute
+  DashboardChatIndexRoute: typeof DashboardChatIndexRoute
+  DashboardHomeIndexRoute: typeof DashboardHomeIndexRoute
+  DashboardSettingIndexRoute: typeof DashboardSettingIndexRoute
+}
+
+const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
+  DashboardBillingIndexRoute: DashboardBillingIndexRoute,
+  DashboardChatIndexRoute: DashboardChatIndexRoute,
+  DashboardHomeIndexRoute: DashboardHomeIndexRoute,
+  DashboardSettingIndexRoute: DashboardSettingIndexRoute,
+}
+
+const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
+  DashboardRouteRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  webRouteRoute: webRouteRoute,
+  DashboardRouteRoute: DashboardRouteRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
