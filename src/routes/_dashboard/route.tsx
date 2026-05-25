@@ -1,14 +1,8 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { multipleProtectRoute } from "@/utils/protect-route";
 
 export const Route = createFileRoute("/_dashboard")({
-	component: RouteComponent,
+	beforeLoad: async ({ location }) =>
+		await multipleProtectRoute("/login", location.href),
+	component: () => <Outlet />,
 });
-
-function RouteComponent() {
-	return (
-		<div>
-			Hello "/_dashboard"!
-			<Outlet />
-		</div>
-	);
-}

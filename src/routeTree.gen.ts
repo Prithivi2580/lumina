@@ -16,6 +16,7 @@ import { Route as DashboardSettingIndexRouteImport } from './routes/_dashboard/s
 import { Route as DashboardHomeIndexRouteImport } from './routes/_dashboard/home/index'
 import { Route as DashboardChatIndexRouteImport } from './routes/_dashboard/chat/index'
 import { Route as DashboardBillingIndexRouteImport } from './routes/_dashboard/billing/index'
+import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/_dashboard',
@@ -50,9 +51,15 @@ const DashboardBillingIndexRoute = DashboardBillingIndexRouteImport.update({
   path: '/billing/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
+const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
+  id: '/api/auth/$',
+  path: '/api/auth/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/billing/': typeof DashboardBillingIndexRoute
   '/chat/': typeof DashboardChatIndexRoute
   '/home/': typeof DashboardHomeIndexRoute
@@ -60,6 +67,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/billing': typeof DashboardBillingIndexRoute
   '/chat': typeof DashboardChatIndexRoute
   '/home': typeof DashboardHomeIndexRoute
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/(web)': typeof webRouteRoute
   '/_dashboard': typeof DashboardRouteRouteWithChildren
+  '/api/auth/$': typeof ApiAuthSplatRoute
   '/_dashboard/billing/': typeof DashboardBillingIndexRoute
   '/_dashboard/chat/': typeof DashboardChatIndexRoute
   '/_dashboard/home/': typeof DashboardHomeIndexRoute
@@ -77,14 +86,21 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/billing/' | '/chat/' | '/home/' | '/setting/'
+  fullPaths:
+    | '/'
+    | '/api/auth/$'
+    | '/billing/'
+    | '/chat/'
+    | '/home/'
+    | '/setting/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/billing' | '/chat' | '/home' | '/setting'
+  to: '/' | '/api/auth/$' | '/billing' | '/chat' | '/home' | '/setting'
   id:
     | '__root__'
     | '/'
     | '/(web)'
     | '/_dashboard'
+    | '/api/auth/$'
     | '/_dashboard/billing/'
     | '/_dashboard/chat/'
     | '/_dashboard/home/'
@@ -95,6 +111,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   webRouteRoute: typeof webRouteRoute
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
+  ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -148,6 +165,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardBillingIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
+    '/api/auth/$': {
+      id: '/api/auth/$'
+      path: '/api/auth/$'
+      fullPath: '/api/auth/$'
+      preLoaderRoute: typeof ApiAuthSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -173,6 +197,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   webRouteRoute: webRouteRoute,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
+  ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
